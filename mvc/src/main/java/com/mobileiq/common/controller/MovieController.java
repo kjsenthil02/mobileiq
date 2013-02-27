@@ -4,17 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.mobileiq.common.model.Movie;
 
 @Controller
 public class MovieController {
 
+	@Value("${url}")
+	private String remoteUrl;
 	/**
 	 * To display view page
 	 * 
@@ -33,30 +37,34 @@ public class MovieController {
 	 * 
 	 */
 	@RequestMapping(value="/json", method = RequestMethod.GET,headers="Accept=*/*")
-	public @ResponseBody Movie getShopInJSON() {
+	public @ResponseBody
+	Movie getShopInJSON() {
 
-		List<String> list = new ArrayList<String>();
-		list.add("The Shawshank Redemption");
-		list.add("Forrest Gump");
-		list.add("Schindler's List");
-		list.add("The Godfather");
-		list.add("The Green Mile");
-		list.add("Hotel Rwanda");
-		list.add("Goodfellas");
-		list.add("3:10 to Yuma");
-		list.add("Scarface");
-		list.add("The Bucket List");
-		list.add("The Terminal");
-		list.add("My Movie");
-		list.add("My Movie 1");
-		
-		Random r = new Random();
-		int Low = 0;
-		int High = 25;
-		int R = r.nextInt(High-Low) + Low;
+		RestTemplate restTemplate = new RestTemplate();
+
 		Movie movie = new Movie();
-		movie.setName(list.get(R));
-		
+
+		try {
+			movie = restTemplate.getForObject(remoteUrl, Movie.class);
+		} catch (RuntimeException e) {
+			List<String> list = new ArrayList<String>();
+			list.add("My Movie 1");
+			list.add("My Movie 2");
+			list.add("My Movie 3");
+			list.add("My Movie 4");
+			list.add("My Movie 5");
+			list.add("My Movie 6");
+			list.add("My Movie 7");
+			list.add("My Movie 8");
+			list.add("My Movie 9");
+			list.add("My Movie 10");
+			Random r = new Random();
+			int Low = 0;
+			int High = 25;
+			int R = r.nextInt(High - Low) + Low;
+			movie.setName(list.get(R));
+		}
+
 		return movie;
 	}
 }
